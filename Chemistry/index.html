@@ -1,0 +1,521 @@
+
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>جدول تناوبی — کامل (۱۱۸ عنصر)</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --card:#0b1220;
+    --accent:#7c3aed;
+    --accent-2:#06b6d4;
+    --muted:#9aa4b2;
+    --glass: rgba(255,255,255,0.04);
+    --glass-2: rgba(255,255,255,0.02);
+    --shadow: 0 6px 18px rgba(12,17,27,0.6);
+    font-family: "IranSans", ui-sans-serif, system-ui, "Helvetica Neue", Arial;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent 8%),
+                radial-gradient(900px 500px at 90% 90%, rgba(6,182,212,0.06), transparent 10%),
+                var(--bg);
+    color:#e6eef6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    direction:rtl;
+  }
+  header{
+    text-align:center;
+    padding:28px 16px 6px;
+  }
+  header h1{
+    margin:0;
+    font-size:1.6rem;
+    letter-spacing:0.6px;
+    color:#e6eef6;
+    text-shadow: 0 2px 18px rgba(124,58,237,0.08);
+  }
+  header p{color:var(--muted); margin:6px 0 18px;}
+
+  .ptable{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto 48px;
+    padding:22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:16px;
+    box-shadow: var(--shadow);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  /* grid: show elements in a flowing grid (responsive) */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(18, 1fr);
+    gap:10px;
+  }
+
+  .elem{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), var(--glass));
+    border-radius:10px;
+    padding:10px;
+    min-height:86px;
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s;
+    border:1px solid rgba(255,255,255,0.03);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+  }
+  .elem:hover{
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 18px 40px rgba(12,17,27,0.6);
+  }
+
+  .number{
+    font-size:0.78rem;
+    color:var(--muted);
+    position:absolute;
+    left:8px; top:8px;
+  }
+  .symbol{
+    font-size:1.9rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-align:center;
+    margin-top:6px;
+  }
+  .name{
+    font-size:0.9rem;
+    text-align:center;
+    color:var(--muted);
+  }
+  .mass{
+    font-size:0.72rem;
+    text-align:center;
+    color:rgba(255,255,255,0.5);
+  }
+
+  /* دسته‌بندی رنگی (تقریبی) */
+  .alkali{ background-image: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.02)); border:1px solid rgba(124,58,237,0.08);}
+  .alkaline{ background-image: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(124,58,237,0.02)); border:1px solid rgba(6,182,212,0.06);}
+  .transition{ background-image: linear-gradient(135deg, rgba(34,197,94,0.04), rgba(124,58,237,0.02)); border:1px solid rgba(34,197,94,0.04);}
+  .posttransition{ background-image: linear-gradient(135deg, rgba(94,234,212,0.03), rgba(124,58,237,0.02)); border:1px solid rgba(94,234,212,0.03);}
+  .metalloid{ background-image: linear-gradient(135deg, rgba(249,115,22,0.04), rgba(124,58,237,0.02)); border:1px solid rgba(249,115,22,0.04);}
+  .nonmetal{ background-image: linear-gradient(135deg, rgba(59,130,246,0.04), rgba(124,58,237,0.02)); border:1px solid rgba(59,130,246,0.04);}
+  .noble{ background-image: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(6,182,212,0.02)); border:1px solid rgba(99,102,241,0.05);}
+  .lanthanoid{ background-image: linear-gradient(135deg, rgba(168,85,247,0.04), rgba(124,58,237,0.02)); border:1px solid rgba(168,85,247,0.04);}
+  .actinoid{ background-image: linear-gradient(135deg, rgba(236,72,153,0.04), rgba(124,58,237,0.02)); border:1px solid rgba(236,72,153,0.04);}
+
+  .empty{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    min-height:16px;
+  }
+
+  /* popup */
+  .popup{
+    position:fixed;
+    z-index:9999;
+    transform: translate(-50%,-120%) scale(.98);
+    background: linear-gradient(180deg, rgba(10,12,20,0.9), rgba(10,12,20,0.95));
+    border-radius:12px;
+    padding:12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+    opacity:0;
+    pointer-events:none;
+    transition: all .2s cubic-bezier(.2,.9,.3,1);
+    backdrop-filter: blur(6px) saturate(120%);
+    min-width:240px;
+  }
+  .popup.show{
+    opacity:1;
+    pointer-events:auto;
+    transform: translate(-50%,-50%) scale(1);
+  }
+  .popup .title{
+    font-size:0.95rem;
+    font-weight:700;
+  }
+  .popup .sub{ font-size:0.78rem; color:var(--muted); }
+
+  .btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition: transform .12s;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    color:inherit;
+    text-decoration:none;
+  }
+  .btn:hover{ transform: translateY(-3px); }
+  .btn.study{ background: linear-gradient(90deg,var(--accent), rgba(124,58,237,0.14)); color:white; border:none; }
+  .btn.video{ background: linear-gradient(90deg,var(--accent-2), rgba(6,182,212,0.12)); color:white; border:none; }
+
+  .legend{
+    display:flex; gap:12px; align-items:center; justify-content:center;
+    color:var(--muted); font-size:0.85rem; padding-top:8px;
+  }
+  .chip{ padding:6px 8px; border-radius:8px; font-size:0.8rem; background:var(--glass-2); border:1px solid rgba(255,255,255,0.02); }
+
+  /* ripple */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-animation 600ms linear;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), rgba(124,58,237,0.10));
+    pointer-events:none;
+  }
+  @keyframes ripple-animation {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  /* fancy wave (outer) */
+  .elem::after{
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%), rgba(124,58,237,0.06), transparent 10%),
+                radial-gradient(circle at calc(var(--rx,50%)+20%) calc(var(--ry,50%)+20%), rgba(6,182,212,0.03), transparent 8%);
+    opacity:0;
+    transition: opacity .28s;
+    pointer-events:none;
+  }
+  .elem.active::after{ opacity:1; }
+
+  @media (max-width:900px){
+    .grid{ gap:8px; grid-template-columns: repeat(9, 1fr); }
+  }
+  @media (max-width:520px){
+    .grid{ grid-template-columns: repeat(6, 1fr); }
+    .elem{ min-height:74px; padding:8px; }
+    .symbol{ font-size:1.4rem; }
+    .popup{ min-width:200px; padding:10px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>جدول تناوبی — کامل (۱۱۸ عنصر)</h1>
+  <p>روی هر عنصر کلیک کن تا منوی <strong>مطالعه</strong> و <strong>ویدیو</strong> باز شود — افکت‌ها فانتزی هستند ✨</p><br>
+  <h3>سازنده و طراه : سید محمد حسین احمدی</h3><br>
+  <h3>دبیر :آقای رحیمی</h3>
+</header>
+
+<section class="ptable" aria-label="Periodic Table">
+  <div class="grid" id="ptable"></div>
+
+  <div style="padding-top:12px; text-align:center;">
+    <div class="legend">
+      <div class="chip">🟣 فلز قلیایی</div>
+      <div class="chip">🔵 نافلز</div>
+      <div class="chip">🟢فلزات واسطه</div>
+      <div class="chip">🟠 نیمه‌فلز</div>
+      <div class="chip">⚪ گاز نجیب</div>
+      <div class="chip">🟡 لانتی‌د</div>
+      <div class="chip">🔴 آکتی‌نید</div>
+    </div>
+  </div>
+</section>
+
+<!-- popup -->
+<div id="popup" class="popup" role="dialog" aria-hidden="true">
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <div class="title" id="popupTitle">عنصر</div>
+    <div class="sub" id="popupSub">اطلاعات</div>
+  </div>
+  <div style="flex:1"></div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-right:8px;">
+    <a id="studyBtn" class="btn study" target="_blank" rel="noopener noreferrer">📘 مطالعه</a>
+    <a id="videoBtn" class="btn video" target="_blank" rel="noopener noreferrer">📺 ویدیو</a>
+  </div>
+</div>
+
+<script>
+/*
+  دادهٔ عناصر — هر آیتم:
+  {z, symbol, name_en, name_fa, mass, cat}
+  دسته‌بندی cat: alkali, alkaline, transition, posttransition, metalloid, nonmetal, noble, lanthanoid, actinoid
+*/
+const elements = [
+{z:1,s:"H",name_en:"Hydrogen",name_fa:"هیدروژن",mass:"1.008",cat:"nonmetal"},
+{z:2,s:"He",name_en:"Helium",name_fa:"هلیم",mass:"4.0026",cat:"noble"},
+{z:3,s:"Li",name_en:"Lithium",name_fa:"لیتیم",mass:"6.94",cat:"alkali"},
+{z:4,s:"Be",name_en:"Beryllium",name_fa:"برلیوم",mass:"9.0122",cat:"alkaline"},
+{z:5,s:"B",name_en:"Boron",name_fa:"بور",mass:"10.81",cat:"metalloid"},
+{z:6,s:"C",name_en:"Carbon",name_fa:"کربن",mass:"12.011",cat:"nonmetal"},
+{z:7,s:"N",name_en:"Nitrogen",name_fa:"نیتروژن",mass:"14.007",cat:"nonmetal"},
+{z:8,s:"O",name_en:"Oxygen",name_fa:"اکسیژن",mass:"15.999",cat:"nonmetal"},
+{z:9,s:"F",name_en:"Fluorine",name_fa:"فلوئور",mass:"18.998",cat:"nonmetal"},
+{z:10,s:"Ne",name_en:"Neon",name_fa:"نئون",mass:"20.180",cat:"noble"},
+{z:11,s:"Na",name_en:"Sodium",name_fa:"سدیم",mass:"22.990",cat:"alkali"},
+{z:12,s:"Mg",name_en:"Magnesium",name_fa:"منیزیم",mass:"24.305",cat:"alkaline"},
+{z:13,s:"Al",name_en:"Aluminium",name_fa:"آلومینیوم",mass:"26.982",cat:"posttransition"},
+{z:14,s:"Si",name_en:"Silicon",name_fa:"سیلیکون",mass:"28.085",cat:"metalloid"},
+{z:15,s:"P",name_en:"Phosphorus",name_fa:"فسفر",mass:"30.974",cat:"nonmetal"},
+{z:16,s:"S",name_en:"Sulfur",name_fa:"گوگرد",mass:"32.06",cat:"nonmetal"},
+{z:17,s:"Cl",name_en:"Chlorine",name_fa:"کلر",mass:"35.45",cat:"nonmetal"},
+{z:18,s:"Ar",name_en:"Argon",name_fa:"آرگون",mass:"39.948",cat:"noble"},
+{z:19,s:"K",name_en:"Potassium",name_fa:"پتاسیم",mass:"39.098",cat:"alkali"},
+{z:20,s:"Ca",name_en:"Calcium",name_fa:"کلسیم",mass:"40.078",cat:"alkaline"},
+{z:21,s:"Sc",name_en:"Scandium",name_fa:"اسکاندیم",mass:"44.956",cat:"transition"},
+{z:22,s:"Ti",name_en:"Titanium",name_fa:"تیتانیوم",mass:"47.867",cat:"transition"},
+{z:23,s:"V",name_en:"Vanadium",name_fa:"وانادیم",mass:"50.942",cat:"transition"},
+{z:24,s:"Cr",name_en:"Chromium",name_fa:"کروم",mass:"51.996",cat:"transition"},
+{z:25,s:"Mn",name_en:"Manganese",name_fa:"منگنز",mass:"54.938",cat:"transition"},
+{z:26,s:"Fe",name_en:"Iron",name_fa:"آهن",mass:"55.845",cat:"transition"},
+{z:27,s:"Co",name_en:"Cobalt",name_fa:"کوبالت",mass:"58.933",cat:"transition"},
+{z:28,s:"Ni",name_en:"Nickel",name_fa:"نیکل",mass:"58.693",cat:"transition"},
+{z:29,s:"Cu",name_en:"Copper",name_fa:"مس",mass:"63.546",cat:"transition"},
+{z:30,s:"Zn",name_en:"Zinc",name_fa:"روی",mass:"65.38",cat:"transition"},
+{z:31,s:"Ga",name_en:"Gallium",name_fa:"گالیم",mass:"69.723",cat:"posttransition"},
+{z:32,s:"Ge",name_en:"Germanium",name_fa:"ژرمانیم",mass:"72.630",cat:"metalloid"},
+{z:33,s:"As",name_en:"Arsenic",name_fa:"آرسنیک",mass:"74.922",cat:"metalloid"},
+{z:34,s:"Se",name_en:"Selenium",name_fa:"سلنیوم",mass:"78.971",cat:"nonmetal"},
+{z:35,s:"Br",name_en:"Bromine",name_fa:"برم",mass:"79.904",cat:"nonmetal"},
+{z:36,s:"Kr",name_en:"Krypton",name_fa:"کریپتون",mass:"83.798",cat:"noble"},
+{z:37,s:"Rb",name_en:"Rubidium",name_fa:"روبیدیم",mass:"85.468",cat:"alkali"},
+{z:38,s:"Sr",name_en:"Strontium",name_fa:"استرانسیوم",mass:"87.62",cat:"alkaline"},
+{z:39,s:"Y",name_en:"Yttrium",name_fa:"ایتریم",mass:"88.906",cat:"transition"},
+{z:40,s:"Zr",name_en:"Zirconium",name_fa:"زیرکونیوم",mass:"91.224",cat:"transition"},
+{z:41,s:"Nb",name_en:"Niobium",name_fa:"نایوبیم",mass:"92.906",cat:"transition"},
+{z:42,s:"Mo",name_en:"Molybdenum",name_fa:"مولیبدن",mass:"95.95",cat:"transition"},
+{z:43,s:"Tc",name_en:"Technetium",name_fa:"تکنسیم",mass:"98",cat:"transition"},
+{z:44,s:"Ru",name_en:"Ruthenium",name_fa:"روتنیوم",mass:"101.07",cat:"transition"},
+{z:45,s:"Rh",name_en:"Rhodium",name_fa:"رودیوم",mass:"102.91",cat:"transition"},
+{z:46,s:"Pd",name_en:"Palladium",name_fa:"پالادیم",mass:"106.42",cat:"transition"},
+{z:47,s:"Ag",name_en:"Silver",name_fa:"نقره",mass:"107.87",cat:"transition"},
+{z:48,s:"Cd",name_en:"Cadmium",name_fa:"کادمیوم",mass:"112.41",cat:"transition"},
+{z:49,s:"In",name_en:"Indium",name_fa:"ایندیوم",mass:"114.82",cat:"posttransition"},
+{z:50,s:"Sn",name_en:"Tin",name_fa:"قلع",mass:"118.71",cat:"posttransition"},
+{z:51,s:"Sb",name_en:"Antimony",name_fa:"آنتیموان",mass:"121.76",cat:"metalloid"},
+{z:52,s:"Te",name_en:"Tellurium",name_fa:"تلور",mass:"127.60",cat:"metalloid"},
+{z:53,s:"I",name_en:"Iodine",name_fa:"ید",mass:"126.90",cat:"nonmetal"},
+{z:54,s:"Xe",name_en:"Xenon",name_fa:"زنون",mass:"131.29",cat:"noble"},
+{z:55,s:"Cs",name_en:"Cesium",name_fa:"سزیم",mass:"132.91",cat:"alkali"},
+{z:56,s:"Ba",name_en:"Barium",name_fa:"باریم",mass:"137.33",cat:"alkaline"},
+{z:57,s:"La",name_en:"Lanthanum",name_fa:"لانتان",mass:"138.91",cat:"lanthanoid"},
+{z:58,s:"Ce",name_en:"Cerium",name_fa:"سریوم",mass:"140.12",cat:"lanthanoid"},
+{z:59,s:"Pr",name_en:"Praseodymium",name_fa:"پرازئودیم",mass:"140.91",cat:"lanthanoid"},
+{z:60,s:"Nd",name_en:"Neodymium",name_fa:"نئودیم",mass:"144.24",cat:"lanthanoid"},
+{z:61,s:"Pm",name_en:"Promethium",name_fa:"پرمیتیم",mass:"145",cat:"lanthanoid"},
+{z:62,s:"Sm",name_en:"Samarium",name_fa:"ساماریوم",mass:"150.36",cat:"lanthanoid"},
+{z:63,s:"Eu",name_en:"Europium",name_fa:"اروپیم",mass:"151.96",cat:"lanthanoid"},
+{z:64,s:"Gd",name_en:"Gadolinium",name_fa:"گادولینیوم",mass:"157.25",cat:"lanthanoid"},
+{z:65,s:"Tb",name_en:"Terbium",name_fa:" تربیم",mass:"158.93",cat:"lanthanoid"},
+{z:66,s:"Dy",name_en:"Dysprosium",name_fa:"دیسپروزیم",mass:"162.50",cat:"lanthanoid"},
+{z:67,s:"Ho",name_en:"Holmium",name_fa:"هولمیوم",mass:"164.93",cat:"lanthanoid"},
+{z:68,s:"Er",name_en:"Erbium",name_fa:"اربیم",mass:"167.26",cat:"lanthanoid"},
+{z:69,s:"Tm",name_en:"Thulium",name_fa:"تولیوم",mass:"168.93",cat:"lanthanoid"},
+{z:70,s:"Yb",name_en:"Ytterbium",name_fa:"ایتربیوم",mass:"173.05",cat:"lanthanoid"},
+{z:71,s:"Lu",name_en:"Lutetium",name_fa:"لوتتیوم",mass:"174.97",cat:"lanthanoid"},
+{z:72,s:"Hf",name_en:"Hafnium",name_fa:"هافنیوم",mass:"178.49",cat:"transition"},
+{z:73,s:"Ta",name_en:"Tantalum",name_fa:"تانتال",mass:"180.95",cat:"transition"},
+{z:74,s:"W",name_en:"Tungsten",name_fa:"تنگستن (W)",mass:"183.84",cat:"transition"},
+{z:75,s:"Re",name_en:"Rhenium",name_fa:"رنیوم",mass:"186.21",cat:"transition"},
+{z:76,s:"Os",name_en:"Osmium",name_fa:"اسمیوم",mass:"190.23",cat:"transition"},
+{z:77,s:"Ir",name_en:"Iridium",name_fa:"ایریدیم",mass:"192.22",cat:"transition"},
+{z:78,s:"Pt",name_en:"Platinum",name_fa:"پلاتین",mass:"195.08",cat:"transition"},
+{z:79,s:"Au",name_en:"Gold",name_fa:"طلا",mass:"196.97",cat:"transition"},
+{z:80,s:"Hg",name_en:"Mercury",name_fa:"جیوه",mass:"200.59",cat:"transition"},
+{z:81,s:"Tl",name_en:"Thallium",name_fa:"تالیم",mass:"204.38",cat:"posttransition"},
+{z:82,s:"Pb",name_en:"Lead",name_fa:"سرب",mass:"207.2",cat:"posttransition"},
+{z:83,s:"Bi",name_en:"Bismuth",name_fa:"بیسموت",mass:"208.98",cat:"posttransition"},
+{z:84,s:"Po",name_en:"Polonium",name_fa:"پولونیوم",mass:"209",cat:"metalloid"},
+{z:85,s:"At",name_en:"Astatine",name_fa:"آستاتین",mass:"210",cat:"metalloid"},
+{z:86,s:"Rn",name_en:"Radon",name_fa:"رادون",mass:"222",cat:"noble"},
+{z:87,s:"Fr",name_en:"Francium",name_fa:"فرانسیوم",mass:"223",cat:"alkali"},
+{z:88,s:"Ra",name_en:"Radium",name_fa:"رادیوم",mass:"226",cat:"alkaline"},
+{z:89,s:"Ac",name_en:"Actinium",name_fa:"آکتی‌نیوم",mass:"227",cat:"actinoid"},
+{z:90,s:"Th",name_en:"Thorium",name_fa:"توریوم",mass:"232.04",cat:"actinoid"},
+{z:91,s:"Pa",name_en:"Protactinium",name_fa:"پروتاکتینیوم",mass:"231.04",cat:"actinoid"},
+{z:92,s:"U",name_en:"Uranium",name_fa:"اورانیم",mass:"238.03",cat:"actinoid"},
+{z:93,s:"Np",name_en:"Neptunium",name_fa:"نپتونیم",mass:"237",cat:"actinoid"},
+{z:94,s:"Pu",name_en:"Plutonium",name_fa:"پلوتونیم",mass:"244",cat:"actinoid"},
+{z:95,s:"Am",name_en:"Americium",name_fa:"آمریکیوم",mass:"243",cat:"actinoid"},
+{z:96,s:"Cm",name_en:"Curium",name_fa:"کیوریم",mass:"247",cat:"actinoid"},
+{z:97,s:"Bk",name_en:"Berkelium",name_fa:"برکلیوم",mass:"247",cat:"actinoid"},
+{z:98,s:"Cf",name_en:"Californium",name_fa:"کالیفرنیوم",mass:"251",cat:"actinoid"},
+{z:99,s:"Es",name_en:"Einsteinium",name_fa:"اینشتینیم",mass:"252",cat:"actinoid"},
+{z:100,s:"Fm",name_en:"Fermium",name_fa:"فرمیوم",mass:"257",cat:"actinoid"},
+{z:101,s:"Md",name_en:"Mendelevium",name_fa:"مندلوویوم",mass:"258",cat:"actinoid"},
+{z:102,s:"No",name_en:"Nobelium",name_fa:"نوبلیوم",mass:"259",cat:"actinoid"},
+{z:103,s:"Lr",name_en:"Lawrencium",name_fa:"لاورنسیم",mass:"266",cat:"actinoid"},
+{z:104,s:"Rf",name_en:"Rutherfordium",name_fa:"رادررفوردیم",mass:"267",cat:"transition"},
+{z:105,s:"Db",name_en:"Dubnium",name_fa:"دوبنیوم",mass:"268",cat:"transition"},
+{z:106,s:"Sg",name_en:"Seaborgium",name_fa:"سیبورگیوم",mass:"269",cat:"transition"},
+{z:107,s:"Bh",name_en:"Bohrium",name_fa:"بوریم",mass:"270",cat:"transition"},
+{z:108,s:"Hs",name_en:"Hassium",name_fa:"هسیوم",mass:"269",cat:"transition"},
+{z:109,s:"Mt",name_en:"Meitnerium",name_fa:"میتنریم",mass:"278",cat:"transition"},
+{z:110,s:"Ds",name_en:"Darmstadtium",name_fa:"دارمشتاتیوم",mass:"281",cat:"transition"},
+{z:111,s:"Rg",name_en:"Roentgenium",name_fa:"رونتگنیوم",mass:"282",cat:"transition"},
+{z:112,s:"Cn",name_en:"Copernicium",name_fa:"کوپرنیشیوم",mass:"285",cat:"transition"},
+{z:113,s:"Nh",name_en:"Nihonium",name_fa:"نیوونیوم",mass:"286",cat:"posttransition"},
+{z:114,s:"Fl",name_en:"Flerovium",name_fa:"فلروویوم",mass:"289",cat:"posttransition"},
+{z:115,s:"Mc",name_en:"Moscovium",name_fa:"مسکوویوم",mass:"290",cat:"posttransition"},
+{z:116,s:"Lv",name_en:"Livermorium",name_fa:"لیورموریم",mass:"293",cat:"posttransition"},
+{z:117,s:"Ts",name_en:"Tennessine",name_fa:"تنسین",mass:"294",cat:"metalloid"},
+{z:118,s:"Og",name_en:"Oganesson",name_fa:"اوگانِسون",mass:"294",cat:"noble"},
+];
+
+// تابع کمکی برای ساخت لینک و المان‌ها
+function makeElement(el){
+  const div = document.createElement('div');
+  div.className = 'elem ' + (el.cat || 'nonmetal');
+  div.dataset.symbol = el.s;
+  div.dataset.name = el.name_fa;
+  div.dataset.atomic = el.z;
+  div.dataset.mass = el.mass;
+  // لینک مطالعه -> ویکی‌پدیا (انگلیسی)
+  const wiki = 'https://en.wikipedia.org/wiki/' + encodeURIComponent(el.name_en);
+  const video = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(el.name_en + ' element');
+  div.dataset.study = wiki;
+  div.dataset.video = video;
+
+  // محتوا
+  div.innerHTML = `<div class="number">${el.z}</div>
+                   <div class="symbol">${el.s}</div>
+                   <div class="name">${el.name_fa}</div>
+                   <div class="mass">${el.mass}</div>`;
+  return div;
+}
+
+// قرار دادن همه عناصر در شبکه
+const container = document.getElementById('ptable');
+elements.forEach(el=>{
+  container.appendChild(makeElement(el));
+});
+
+// popup و رفتار کلیک + افکت فانتزی
+(function(){
+  const popup = document.getElementById('popup');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupSub = document.getElementById('popupSub');
+  const studyBtn = document.getElementById('studyBtn');
+  const videoBtn = document.getElementById('videoBtn');
+
+  document.querySelectorAll('.elem').forEach(el=>{
+    el.addEventListener('click', (ev)=>{
+      // افکت رِیپل
+      const rect = el.getBoundingClientRect();
+      const rx = (ev.clientX - rect.left) / rect.width * 100;
+      const ry = (ev.clientY - rect.top) / rect.height * 100;
+      el.style.setProperty('--rx', rx + '%');
+      el.style.setProperty('--ry', ry + '%');
+
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      const size = Math.max(rect.width, rect.height) * 0.9;
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (ev.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (ev.clientY - rect.top - size/2) + 'px';
+      el.appendChild(ripple);
+      // remove after animation
+      setTimeout(()=> ripple.remove(), 700);
+
+      // فعال‌سازی موج پس‌زمینه
+      el.classList.add('active');
+      setTimeout(()=> el.classList.remove('active'), 900);
+
+      // خواندن داده‌ها
+      const sym = el.dataset.symbol || '';
+      const name = el.dataset.name || '';
+      const num = el.dataset.atomic || '';
+      const mass = el.dataset.mass || '';
+      const study = el.dataset.study || '#';
+      const video = el.dataset.video || '#';
+
+      popupTitle.textContent = sym + " — " + name + " (" + num + ")";
+      popupSub.textContent = "جرم اتمی: " + mass;
+
+      studyBtn.href = study;
+      videoBtn.href = video;
+
+      // موقعیت‌دهی popup: ترجیحاً بالای عنصر (اما تنظیم برای موبایل)
+      const centerX = rect.left + rect.width/2 + window.scrollX;
+      const centerY = rect.top + rect.height/2 + window.scrollY;
+      const left = Math.min(Math.max(centerX, 120), window.innerWidth - 120);
+      let top = rect.top + window.scrollY - 12;
+      // اگر عنصر پایین صفحه است یا در موبایل، popup زیر عنصر
+      if (rect.top > window.innerHeight * 0.6 || window.innerWidth < 520) {
+        top = rect.bottom + window.scrollY + 12;
+      } else {
+        top = rect.top + window.scrollY - 12;
+      }
+      popup.style.left = left + 'px';
+      popup.style.top = top + 'px';
+      popup.classList.add('show');
+      popup.setAttribute('aria-hidden','false');
+
+      // برای دسترسی: تمرکز روی دکمه مطالعه
+      setTimeout(()=> studyBtn.focus(), 120);
+    });
+
+    // دبل‌کلیک باز کردن مطالعه
+    el.addEventListener('dblclick', ()=>{
+      const study = el.dataset.study || '#';
+      window.open(study, '_blank', 'noopener');
+    });
+
+    // راست کلیک = باز کردن popup همونطور فانتزی
+    el.addEventListener('contextmenu', (ev)=>{
+      ev.preventDefault();
+      el.click();
+    });
+  });
+
+  // بستن وقتی کلیک بیرون زده شد
+  document.addEventListener('click', (e)=>{
+    const insidePopup = popup.contains(e.target);
+    const clickedElem = e.target.closest('.elem');
+    if(!insidePopup && !clickedElem){
+      popup.classList.remove('show');
+      popup.setAttribute('aria-hidden','true');
+    }
+  });
+
+  // Escape برای بستن
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      popup.classList.remove('show');
+      popup.setAttribute('aria-hidden','true');
+    }
+  });
+
+  // تنظیم popup موبایل وقتی اندازه تغییر کند
+  function adjustPopupForMobile(){
+    if(window.innerWidth < 520){
+      popup.style.left = '50%';
+      if(popup.classList.contains('show')){
+        popup.style.top = (window.scrollY + window.innerHeight*0.65) + 'px';
+      }
+    }
+  }
+  window.addEventListener('resize', adjustPopupForMobile);
+  window.addEventListener('scroll', adjustPopupForMobile);
+
+})();
+</script>
+</body>
+</html>
